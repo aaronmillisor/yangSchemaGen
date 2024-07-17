@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
 
 	"log"
 
 	yang "github.com/openconfig/goyang/pkg/yang"
-	//"pkg/yang"
 )
 
 // struct templates to marshal a json schema file for yaml
@@ -67,19 +65,32 @@ type BooleanProperty struct {
 }
 
 func printModules(path string, entries map[string]*yang.Entry) {
+
 	for k, v := range entries {
 		fmt.Println(path+k, " ", v.Kind, ", key: ", v.Key)
 		if v.Type != nil {
 			fmt.Println(v.Type.Name)
 			if v.Type.Name == "leafref" {
-				relativePath := strings.Split(v.Type.Path, "/")
-				fmt.Println(v.Type, relativePath)
-				entry := v.Parent
-				for _, elem := range relativePath[1:] {
-					fmt.Println(elem)
-					entry = entry.Dir[elem]
+				fmt.Println(v.Type.Path)
+				/*
+						relativePath := strings.Split(v.Type.Path())
+						fmt.Println(v.Type, relativePath)
+						entry := v.Parent
+						for _, elem := range relativePath[1:] {
+							fmt.Println("the elem: ", elem)
+							entry = entry.Dir[elem]
+						}
+					fmt.Println("leafref type: ", entry.Type)
+				*/
+			}
+			if v.Type.Name == "enumeration" {
+				fmt.Println("Enum: ", v.Type.Enum)
+			}
+			if v.Type.Name == "identityref" {
+				for _, v := range v.Type.IdentityBase.Values {
+					fmt.Println(v.Name, " ", v.ParentNode().NName())
 				}
-				fmt.Println("leafref type: ", entry.Type)
+				//	fmt.Println("Identity: ", v.Type.IdentityBase.Values)
 			}
 		}
 		fmt.Println("--")
@@ -89,6 +100,7 @@ func printModules(path string, entries map[string]*yang.Entry) {
 
 // function that reads in set of yang files using goyang
 func readYangFiles(yangDir string) {
+
 	filenames := make(map[string]bool)
 	filenames["yang/openconfig-interfaces.yang"] = true
 	filenames["yang/openconfig-network-instance.yang"] = true
@@ -102,6 +114,7 @@ func readYangFiles(yangDir string) {
 		return
 	}
 	*/
+
 	modules := yang.NewModules()
 
 	// Loop through each yang file and process it
@@ -129,7 +142,7 @@ func readYangFiles(yangDir string) {
 	}
 
 	// get yang entry from module
-	entry, err := modules.GetModule("openconfig-interfaces")
+	entry, err := modules.GetModule("openconfig-network-instance")
 	if err != nil {
 		log.Fatal("Problem finding module ", err)
 	}
