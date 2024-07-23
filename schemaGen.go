@@ -71,20 +71,6 @@ func resolveLeafRef(entry *yang.Entry) *yang.Entry {
 	return nil
 }
 
-func getValueType(entry *yang.Entry) string {
-	if !entry.IsLeaf() {
-		return ""
-	}
-
-	if entry.Type.Name == "leafref" {
-		e := resolveLeafRef(entry)
-		if e != nil {
-			return getValueType(e)
-		}
-	}
-	return entry.Type.Name
-}
-
 func resolveIdentities(entry *yang.Entry) []string {
 	//fmt.Println("resolution name: ", entry.Type.Name, entry.Name)
 	if entry.Type.IdentityBase == nil {
@@ -194,15 +180,6 @@ func main() {
 	EntriesByPath = make(map[string]*yang.Entry)
 	ConfigEntries = make(map[string]*yang.Entry)
 
-	//readYangFiles("./yang")
-	/*
-		filenames := make(map[string]bool)
-		filenames["yang/openconfig-interfaces.yang"] = true
-		filenames["yang/openconfig-network-instance.yang"] = true
-		filenames["yang/openconfig-if-ethernet.yang"] = true
-		filenames["yang/openconfig-if-ip.yang"] = true
-	*/
-
 	modules := yang.NewModules()
 
 	for _, filename := range flag.Args() {
@@ -241,24 +218,6 @@ func main() {
 			CollectPaths(true, "/", entry.Dir)
 		}
 	}
-
-	/*
-		for k, v := range ConfigEntries {
-			fmt.Println(k, " ", getValueType(v))
-			if getValueType(v) == "identityref" {
-				identities := resolveIdentities(v)
-				for _, id := range identities {
-					fmt.Println(" ", id)
-				}
-			}
-			if getValueType(v) == "enumeration" {
-				enums := resolveEnums(v)
-				for _, e := range enums {
-					fmt.Println(" ", e)
-				}
-			}
-		}
-	*/
 
 	// - schema is top level object
 	//   - properties are a list of things that contain a unique set of objects, e.g. /interfaces
@@ -402,6 +361,7 @@ func main() {
 						Items:       &leafProperty,
 					}
 				}
+
 				if currentEntry.IsLeaf() {
 					currentProperty.Properties[pathElem] = leafProperty
 				}
