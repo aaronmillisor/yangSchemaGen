@@ -23,4 +23,15 @@ All subsequent arguments are treated as input filenames for yang parsing.
 
 Union types are sketchy here, I just treat them as strings for now.
 
+Example invocation:
+```
+./yangSchemaGen -skipmodules "ietf-interfaces" -outfile schema.json yang/openconfig-interfaces.yang yang/openconfig-network-instance.yang yan
+g/openconfig-if-ethernet.yang yang/openconfig-if-ip.yang
+```
 
+Now create a blank yaml file with this at the header:
+
+```
+# yaml-language-server: $schema=/path/to/schema.json
+
+```

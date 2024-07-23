@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=/Users/amilliso/apps/yangSchemaGen/schema.json
+
+openconfig-interfaces:interfaces:
+  interface:
+    - name: "Loopback0"
+      config:
+        name: "Loopback0"
+        description: "Example interface"
+        type: iana-if-type:softwareLoopback
+        enabled: true
