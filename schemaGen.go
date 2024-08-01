@@ -40,10 +40,28 @@ var ConfigEntries map[string]*yang.Entry // does not contain state nodes, does c
 func CollectPaths(firstRun bool, path string, entries map[string]*yang.Entry) {
 	for k, v := range entries {
 		//fmt.Println("Testing...", v.Parent.Prefix.Parent.NName(), " ", v.Prefix.Parent.NName())
-		if v.Parent.Prefix.Parent.NName() != v.Prefix.Parent.NName() || firstRun == true {
-			currentPrefix := v.Prefix.Parent.NName()
-			k = currentPrefix + ":" + k
+		if k == "bgp" || k == "ethernet" || k == "ipv4" {
+			log.Println("Made it to: ", k)
+			fmt.Println(v.Augmented)
 		}
+
+		if v.Parent.Prefix.Parent.NName() != v.Prefix.Parent.NName() || firstRun == true {
+
+			showPrefix := false
+			if v.Parent.Augmented != nil {
+				for _, vv := range v.Parent.Augmented {
+					if vv.Prefix.Name == v.Prefix.Name {
+						log.Print("Heyoooo got here")
+						showPrefix = true
+					}
+				}
+			}
+			if showPrefix || firstRun {
+				currentPrefix := v.Prefix.Parent.NName()
+				k = currentPrefix + ":" + k
+			}
+		}
+
 		//fmt.Println(v.Prefix.Parent.NName())
 		EntriesByPath[path+k] = v
 		//fmt.Println(path + k)
@@ -196,6 +214,12 @@ func main() {
 	if errs != nil {
 		fmt.Println(errs)
 	}
+
+	thing1, _ := modules.FindModuleByNamespace("openconfig-network-instance")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	fmt.Println(thing1)
 
 	for k, _ := range modules.Modules {
 		//fmt.Println(k)

@@ -33,5 +33,4 @@ Now create a blank yaml file with this at the header:
 
 ```
 # yaml-language-server: $schema=/path/to/schema.json
-
 ```
