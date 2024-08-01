@@ -95,6 +95,10 @@ func resolveIdentities(entry *yang.Entry) []string {
 		}
 	*/
 	identities := make([]string, 0)
+
+	if len(entry.Type.IdentityBase.Values) == 0 {
+		identities = append(identities, "n/a")
+	}
 	for _, v := range entry.Type.IdentityBase.Values {
 		strResult := fmt.Sprintf("%s:%s", v.ParentNode().NName(), v.Name)
 		identities = append(identities, strResult)
@@ -107,12 +111,17 @@ func resolveEnums(entry *yang.Entry) []string {
 		log.Fatalf("Shouldn't happen")
 		return nil
 	}
+
 	enums := make([]string, 0)
+	if len(entry.Type.Enum.ToString) == 0 {
+		log.Fatal("zero")
+	}
+
 	for _, v := range entry.Type.Enum.ToString {
 		enums = append(enums, v)
 	}
-	return enums
 
+	return enums
 }
 
 func printModules(path string, entries map[string]*yang.Entry) {
@@ -364,6 +373,10 @@ func main() {
 				}
 				if leafType == "enumeration" {
 					result := resolveEnums(currentEntry)
+					if result == nil {
+						log.Fatal(("Got to nil"))
+						continue
+					}
 					leafProperty.Enum = result
 				}
 
