@@ -40,10 +40,6 @@ var ConfigEntries map[string]*yang.Entry // does not contain state nodes, does c
 func CollectPaths(firstRun bool, path string, entries map[string]*yang.Entry) {
 	for k, v := range entries {
 		//fmt.Println("Testing...", v.Parent.Prefix.Parent.NName(), " ", v.Prefix.Parent.NName())
-		if k == "bgp" || k == "ethernet" || k == "ipv4" {
-			log.Println("Made it to: ", k)
-			fmt.Println(v.Augmented)
-		}
 
 		if v.Parent.Prefix.Parent.NName() != v.Prefix.Parent.NName() || firstRun == true {
 
@@ -51,7 +47,6 @@ func CollectPaths(firstRun bool, path string, entries map[string]*yang.Entry) {
 			if v.Parent.Augmented != nil {
 				for _, vv := range v.Parent.Augmented {
 					if vv.Prefix.Name == v.Prefix.Name {
-						log.Print("Heyoooo got here")
 						showPrefix = true
 					}
 				}
