@@ -103,6 +103,9 @@ func resolveIdentities(entry *yang.Entry) []string {
 		strResult := fmt.Sprintf("%s:%s", v.ParentNode().NName(), v.Name)
 		identities = append(identities, strResult)
 	}
+	if len(identities) == 0 {
+		return nil
+	}
 	return identities
 }
 
